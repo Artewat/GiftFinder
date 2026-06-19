@@ -17,10 +17,19 @@ class LoginRequest(BaseModel):
     password: str
 
 
+class VerifyToken(BaseModel):
+    token: str
+
+
+class EmailIn(BaseModel):
+    email: EmailStr
+
+
 class UserOut(BaseModel):
     id: int
     email: EmailStr
     tier: str
+    email_verified: bool
     created_at: datetime
 
     model_config = {"from_attributes": True}

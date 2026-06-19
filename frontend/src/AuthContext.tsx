@@ -22,7 +22,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   async function login(email: string, password: string) { setUser(await apiLogin(email, password)); }
-  async function register(email: string, password: string) { setUser(await apiRegister(email, password)); }
+  // строгий гейтинг: register больше НЕ логинит — вход только после подтверждения email
+  async function register(email: string, password: string) { await apiRegister(email, password); }
   async function logout() { await apiLogout(); setUser(null); }
   async function refresh() { setUser(await fetchMe()); }
 

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
+import { resendVerification } from "./api";
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -9,12 +10,18 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [showResend, setShowResend] = useState(false);
+  const [resent, setResent] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError(null); setBusy(true);
+    setError(null); setShowResend(false); setBusy(true);
     try { await login(email, password); navigate("/search"); }
-    catch (err) { setError(err instanceof Error ? err.message : "Ошибка"); }
+    catch (err) {
+      const msg = err instanceof Error ? err.message : "Ошибка";
+      setError(msg);
+      if (msg.toLowerCase().includes("подтверж")) setShowResend(true);  // 403 о неподтверждённом email
+    }
     finally { setBusy(false); }
   }
 
@@ -31,6 +38,13 @@ export default function LoginPage() {
           className="w-full rounded-full bg-violet-600 py-2.5 font-medium text-white hover:bg-violet-700 disabled:opacity-60">
           {busy ? "Входим…" : "Войти"}
         </button>
+        {showResend && (
+          <button type="button"
+            onClick={async () => { await resendVerification(email); setResent(true); }}
+            className="mt-3 w-full text-sm text-violet-700 hover:underline">
+            {resent ? "Письмо отправлено — проверьте почту" : "Отправить письмо подтверждения повторно"}
+          </button>
+        )}
         <p className="mt-4 text-center text-sm text-slate-600">
           Нет аккаунта? <Link to="/register" className="text-violet-700 hover:underline">Регистрация</Link>
         </p>

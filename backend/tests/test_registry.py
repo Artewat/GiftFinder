@@ -10,9 +10,9 @@ def test_available_sources():
 
 def test_seed_source():
     seed = get_source("seed")
-    assert len(list(seed.categories())) == 7
+    assert len(list(seed.categories())) == 13
     offers = list(seed.offers())
-    assert len(offers) == 16
+    assert len(offers) == 82
     assert all(o.currency == "RUB" for o in offers)
 
 

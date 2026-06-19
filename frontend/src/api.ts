@@ -18,6 +18,7 @@ export interface User {
   id: number;
   email: string;
   tier: string;
+  email_verified: boolean;
   created_at: string;
 }
 
@@ -28,11 +29,25 @@ async function jsonOrThrow(res: Response, fallback: string) {
   throw new Error(detail);
 }
 
-export async function register(email: string, password: string): Promise<User> {
+// register БОЛЬШЕ НЕ логинит — возвращает сообщение «проверьте почту»
+export async function register(email: string, password: string): Promise<{ message: string }> {
   const res = await apiFetch("/api/auth/register", {
     method: "POST", body: JSON.stringify({ email, password }),
   });
   return jsonOrThrow(res, "Ошибка регистрации");
+}
+
+export async function verifyEmail(token: string): Promise<void> {
+  const res = await apiFetch("/api/auth/verify-email", {
+    method: "POST", body: JSON.stringify({ token }),
+  });
+  await jsonOrThrow(res, "Ссылка недействительна или истекла");
+}
+
+export async function resendVerification(email: string): Promise<void> {
+  await apiFetch("/api/auth/resend-verification", {
+    method: "POST", body: JSON.stringify({ email }),
+  });
 }
 
 export async function login(email: string, password: string): Promise<User> {
