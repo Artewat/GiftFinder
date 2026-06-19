@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<yml_catalog date="2026-06-13 10:00">
+  <shop>
+    <name>Demo Gifts</name>
+    <company>Demo Gifts LLC</company>
+    <url>https://demo-gifts.example</url>
+    <currencies>
+      <currency id="RUB" rate="1"/>
+    </currencies>
+    <categories>
+      <category id="1">Подарки</category>
+      <category id="10" parentId="1">Рыбалка и туризм</category>
+      <category id="20" parentId="1">Книги</category>
+      <category id="30" parentId="1">Настольные игры</category>
+      <category id="40" parentId="1">Кухня и дом</category>
+      <category id="50" parentId="1">Хобби и творчество</category>
+    </categories>
+    <offers>
+      <offer id="1001" available="true">
+        <name>Набор воблеров для спиннинга, 10 шт</name>
+        <vendor>FishPro</vendor>
+        <price>2490</price>
+        <oldprice>2990</oldprice>
+        <currencyId>RUB</currencyId>
+        <categoryId>10</categoryId>
+        <picture>https://demo-gifts.example/img/1001.jpg</picture>
+        <url>https://demo-gifts.example/product/1001</url>
+        <description>Подарочный набор приманок для рыбалки на щуку и окуня. В фирменной коробке.</description>
+      </offer>
+      <offer id="1002" available="true">
+        <name>Термокружка из нержавеющей стали 500 мл</name>
+        <vendor>ThermoMax</vendor>
+        <price>1290</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>10</categoryId>
+        <picture>https://demo-gifts.example/img/1002.jpg</picture>
+        <url>https://demo-gifts.example/product/1002</url>
+        <description>Держит тепло 12 часов. Удобна на рыбалке, в походе и в дороге.</description>
+      </offer>
+      <offer id="1003" available="true">
+        <name>Складной нож туриста с деревянной рукоятью</name>
+        <vendor>TaigaTools</vendor>
+        <price>1990</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>10</categoryId>
+        <picture>https://demo-gifts.example/img/1003.jpg</picture>
+        <url>https://demo-gifts.example/product/1003</url>
+        <description>Прочный складной нож для рыбалки и походов, подарочная упаковка.</description>
+      </offer>
+      <offer id="2001" available="true">
+        <name>Большая энциклопедия рыболова</name>
+        <vendor>Эксмо</vendor>
+        <price>1490</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>20</categoryId>
+        <picture>https://demo-gifts.example/img/2001.jpg</picture>
+        <url>https://demo-gifts.example/product/2001</url>
+        <description>Иллюстрированный справочник о снастях, наживке и местах ловли. Отличный подарок рыбаку.</description>
+      </offer>
+      <offer id="2002" available="true">
+        <name>Кулинарная книга «Блюда на костре»</name>
+        <vendor>АСТ</vendor>
+        <price>890</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>20</categoryId>
+        <picture>https://demo-gifts.example/img/2002.jpg</picture>
+        <url>https://demo-gifts.example/product/2002</url>
+        <description>Рецепты для приготовления на открытом огне в походе и на даче.</description>
+      </offer>
+      <offer id="3001" available="true">
+        <name>Настольная игра «Каркассон»</name>
+        <vendor>Hobby World</vendor>
+        <price>2790</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>30</categoryId>
+        <picture>https://demo-gifts.example/img/3001.jpg</picture>
+        <url>https://demo-gifts.example/product/3001</url>
+        <description>Семейная стратегия для компании от 2 до 5 человек. Хороший подарок на любой повод.</description>
+      </offer>
+      <offer id="3002" available="true">
+        <name>Настольная игра «Имаджинариум»</name>
+        <vendor>Cosmodrome</vendor>
+        <price>2390</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>30</categoryId>
+        <picture>https://demo-gifts.example/img/3002.jpg</picture>
+        <url>https://demo-gifts.example/product/3002</url>
+        <description>Ассоциативная игра для весёлой компании. Развивает воображение.</description>
+      </offer>
+      <offer id="4001" available="true">
+        <name>Чугунная сковорода-гриль 26 см</name>
+        <vendor>Биол</vendor>
+        <price>3290</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>40</categoryId>
+        <picture>https://demo-gifts.example/img/4001.jpg</picture>
+        <url>https://demo-gifts.example/product/4001</url>
+        <description>Профессиональная сковорода для стейков и овощей. Подойдёт в подарок любителю готовить.</description>
+      </offer>
+      <offer id="4002" available="true">
+        <name>Набор для приготовления глинтвейна</name>
+        <vendor>SpiceBox</vendor>
+        <price>990</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>40</categoryId>
+        <picture>https://demo-gifts.example/img/4002.jpg</picture>
+        <url>https://demo-gifts.example/product/4002</url>
+        <description>Специи и рецепт в подарочной коробке. Уютный зимний подарок.</description>
+      </offer>
+      <offer id="5001" available="true">
+        <name>Набор для рисования акварелью, 36 предметов</name>
+        <vendor>ArtClub</vendor>
+        <price>1790</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>50</categoryId>
+        <picture>https://demo-gifts.example/img/5001.jpg</picture>
+        <url>https://demo-gifts.example/product/5001</url>
+        <description>Краски, кисти и бумага в деревянном кейсе. Подарок для начинающего художника.</description>
+      </offer>
+      <offer id="5002" available="false">
+        <name>Набор для вязания «Тёплый шарф»</name>
+        <vendor>WoolJoy</vendor>
+        <price>1190</price>
+        <currencyId>RUB</currencyId>
+        <categoryId>50</categoryId>
+        <picture>https://demo-gifts.example/img/5002.jpg</picture>
+        <url>https://demo-gifts.example/product/5002</url>
+        <description>Пряжа, спицы и инструкция. Сейчас нет в наличии — для проверки фильтра available.</description>
+      </offer>
+    </offers>
+  </shop>
+</yml_catalog>
