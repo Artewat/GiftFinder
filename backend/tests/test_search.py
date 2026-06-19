@@ -69,4 +69,29 @@ async def test_curate_fallback_on_bad_json(monkeypatch):
     cands = [_fake_product(i) for i in range(1, 11)]
     cards = await search._curate("q", {}, cands)
     assert len(cards) == 8                       # фолбэк: топ-8 по вектору
-    assert all(c["reason"] is None for c in cards)
+    # даже в фолбэке у карточки есть непустое обоснование (а не None) — без пустых карточек
+    assert all(isinstance(c["reason"], str) and c["reason"].strip() for c in cards)
+
+
+@pytest.mark.asyncio
+async def test_curate_array_with_match_reason(monkeypatch):
+    """Модель (deepseek) часто отдаёт голый массив и поле match_reason — парсер должен это понять."""
+    async def fake(system, user):
+        return '[{"id": 2, "match_reason": "по интересам"}, {"id": 1, "match_reason": "в бюджете"}]'
+    monkeypatch.setattr(search, "chat_json", fake)
+    cands = [_fake_product(1), _fake_product(2), _fake_product(3)]
+    cards = await search._curate("q", {}, cands)
+    assert [c["id"] for c in cards] == [2, 1]
+    assert cards[0]["reason"] == "по интересам"
+
+
+@pytest.mark.asyncio
+async def test_curate_picks_without_reason_get_template(monkeypatch):
+    """Товары есть, но reason модель не дала -> подставляется непустой шаблон, не None."""
+    async def fake(system, user):
+        return '{"recommendations": [{"id": 1, "title": "x"}, {"id": 2, "title": "y"}]}'
+    monkeypatch.setattr(search, "chat_json", fake)
+    cands = [_fake_product(1), _fake_product(2), _fake_product(3)]
+    cards = await search._curate("q", {"interests": ["рыбалка"]}, cands)
+    assert [c["id"] for c in cards] == [1, 2]
+    assert all(isinstance(c["reason"], str) and c["reason"].strip() for c in cards)
