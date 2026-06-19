@@ -20,14 +20,16 @@ class Settings(BaseSettings):
     COOKIE_SECURE: bool = False                       # True в проде (HTTPS)
     FRONTEND_ORIGIN: str = "http://localhost:5173"
 
-    # Email-подтверждение
-    EMAIL_BACKEND: str = "console"          # console | smtp (smtp — точка расширения)
-    EMAIL_FROM: str = "no-reply@giftfinder.local"
-    VERIFY_TOKEN_TTL_HOURS: int = 24
+    # Email-подтверждение (по 6-значному коду)
+    EMAIL_BACKEND: str = "console"          # console | smtp (переключается через .env)
+    EMAIL_FROM: str = ""                    # = адрес Яндекса (должен совпадать с SMTP_USER); пусто → берётся SMTP_USER
+    VERIFY_CODE_LENGTH: int = 6
+    VERIFY_CODE_TTL_MINUTES: int = 15       # код короткоживущий
+    MAX_VERIFY_ATTEMPTS: int = 5            # защита от перебора кода
     RESEND_COOLDOWN_SECONDS: int = 60
-    # для будущего SMTP (пока не используются):
-    SMTP_HOST: str = ""
-    SMTP_PORT: int = 587
+    # SMTP (дефолты под Яндекс); реальные значения — в .env при EMAIL_BACKEND=smtp
+    SMTP_HOST: str = "smtp.yandex.ru"
+    SMTP_PORT: int = 465                     # 465 → SSL; 587 → STARTTLS
     SMTP_USER: str = ""
     SMTP_PASSWORD: str = ""
 

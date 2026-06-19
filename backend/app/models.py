@@ -23,16 +23,24 @@ class User(Base):
     )
 
 
-class EmailVerificationToken(Base):
-    __tablename__ = "email_verification_tokens"
+class PendingRegistration(Base):
+    """Заявка на регистрацию ДО подтверждения почты.
+
+    Пользователь сюда кладётся при /register и НЕ попадает в `users`, пока не
+    введёт верный код. После подтверждения строка превращается в запись `users`
+    и удаляется. Один pending на email (email UNIQUE) — повторный register
+    обновляет существующую заявку.
+    """
+
+    __tablename__ = "pending_registrations"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
-    )
-    token: Mapped[str] = mapped_column(String(128), unique=True, index=True, nullable=False)
+    email: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
+    password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
+    # 6-значный код подтверждения
+    code: Mapped[str] = mapped_column(String(128), nullable=False)
+    attempts: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
-    used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )

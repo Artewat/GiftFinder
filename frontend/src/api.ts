@@ -29,19 +29,20 @@ async function jsonOrThrow(res: Response, fallback: string) {
   throw new Error(detail);
 }
 
-// register БОЛЬШЕ НЕ логинит — возвращает сообщение «проверьте почту»
-export async function register(email: string, password: string): Promise<{ message: string }> {
+// register НЕ логинит — возвращает статус и email для экрана ввода кода
+export async function register(email: string, password: string): Promise<{ status: string; email: string }> {
   const res = await apiFetch("/api/auth/register", {
     method: "POST", body: JSON.stringify({ email, password }),
   });
   return jsonOrThrow(res, "Ошибка регистрации");
 }
 
-export async function verifyEmail(token: string): Promise<void> {
+// Подтверждение по коду: при успехе бэк ставит куку (авто-вход) и возвращает User
+export async function verifyEmailCode(email: string, code: string): Promise<User> {
   const res = await apiFetch("/api/auth/verify-email", {
-    method: "POST", body: JSON.stringify({ token }),
+    method: "POST", body: JSON.stringify({ email, code }),
   });
-  await jsonOrThrow(res, "Ссылка недействительна или истекла");
+  return jsonOrThrow(res, "Неверный код");
 }
 
 export async function resendVerification(email: string): Promise<void> {
@@ -54,6 +55,7 @@ export async function login(email: string, password: string): Promise<User> {
   const res = await apiFetch("/api/auth/login", {
     method: "POST", body: JSON.stringify({ email, password }),
   });
+  // неподтверждённых в `users` нет → вход всегда обычный (401 при неверных данных)
   return jsonOrThrow(res, "Неверный email или пароль");
 }
 

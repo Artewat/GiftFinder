@@ -1,8 +1,13 @@
 """Роуты аутентификации. backend/app/routers/auth.py
 Подключи в main.py:  app.include_router(auth_router)
+
+Модель регистрации: пользователь попадает в `users` ТОЛЬКО после подтверждения
+почты. До этого заявка живёт в `pending_registrations`; письмо с кодом шлётся ДО
+сохранения, поэтому сбой SMTP не оставляет «призраков» в БД.
 """
 from __future__ import annotations
 
+import logging
 import secrets
 from datetime import datetime, timedelta, timezone
 
@@ -16,8 +21,10 @@ from app.auth import (
 from app.config import settings
 from app.db import async_session
 from app.mail import send_verification_email
-from app.models import EmailVerificationToken, User
-from app.schemas import EmailIn, LoginRequest, UserCreate, UserOut, VerifyToken
+from app.models import PendingRegistration, User
+from app.schemas import EmailIn, LoginRequest, UserCreate, UserOut, VerifyCode
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
@@ -26,15 +33,13 @@ def _now() -> datetime:
     return datetime.now(timezone.utc)
 
 
-async def _create_token(session, user_id: int) -> str:
-    token = secrets.token_urlsafe(32)
-    session.add(EmailVerificationToken(
-        user_id=user_id,
-        token=token,
-        expires_at=_now() + timedelta(hours=settings.VERIFY_TOKEN_TTL_HOURS),
-    ))
-    await session.commit()
-    return token
+def _generate_code() -> str:
+    """6-значный (по настройке) числовой код подтверждения."""
+    return "".join(secrets.choice("0123456789") for _ in range(settings.VERIFY_CODE_LENGTH))
+
+
+def _code_expiry() -> datetime:
+    return _now() + timedelta(minutes=settings.VERIFY_CODE_TTL_MINUTES)
 
 
 def _set_auth_cookie(response: Response, token: str) -> None:
@@ -52,22 +57,45 @@ def _set_auth_cookie(response: Response, token: str) -> None:
 @router.post("/register", status_code=status.HTTP_201_CREATED)
 async def register(data: UserCreate):
     async with async_session() as session:
+        # уже подтверждённый пользователь?
         exists = await session.execute(select(User).where(User.email == data.email))
         if exists.scalar_one_or_none() is not None:
             raise HTTPException(status.HTTP_400_BAD_REQUEST, "Email уже зарегистрирован")
-        user = User(
-            email=data.email,
-            password_hash=hash_password(data.password),
-            tier="free",
-            email_verified=False,
+
+        pres = await session.execute(
+            select(PendingRegistration).where(PendingRegistration.email == data.email)
         )
-        session.add(user)
+        pending = pres.scalar_one_or_none()
+        # свежая заявка в пределах кулдауна — код ещё жив, повторно не шлём (анти-спам)
+        if pending is not None and (_now() - pending.created_at).total_seconds() < settings.RESEND_COOLDOWN_SECONDS:
+            return {"status": "verification_sent", "email": data.email}
+
+        code = _generate_code()
+        # ПИСЬМО ДО записи в БД: упал SMTP -> ничего не сохраняем, чистый повтор
+        try:
+            await send_verification_email(data.email, code)
+        except Exception as exc:  # noqa: BLE001 — любой сбой доставки = регистрация не состоялась
+            logger.warning("register: письмо не отправлено (to=%s): %s", data.email, exc)
+            raise HTTPException(
+                status.HTTP_503_SERVICE_UNAVAILABLE,
+                "Не удалось отправить письмо с кодом. Проверьте адрес и попробуйте позже.",
+            )
+
+        if pending is None:
+            session.add(PendingRegistration(
+                email=data.email,
+                password_hash=hash_password(data.password),
+                code=code,
+                expires_at=_code_expiry(),
+            ))
+        else:  # перерегистрация того же email до подтверждения — обновляем заявку
+            pending.password_hash = hash_password(data.password)
+            pending.code = code
+            pending.attempts = 0
+            pending.expires_at = _code_expiry()
+            pending.created_at = _now()
         await session.commit()
-        await session.refresh(user)
-        token = await _create_token(session, user.id)
-    # строгий режим: куку НЕ ставим — вход только после подтверждения
-    await send_verification_email(user.email, token)
-    return {"status": "ok", "message": "Письмо для подтверждения отправлено"}
+    return {"status": "verification_sent", "email": data.email}
 
 
 @router.post("/login", response_model=UserOut)
@@ -75,53 +103,78 @@ async def login(data: LoginRequest, response: Response):
     async with async_session() as session:
         res = await session.execute(select(User).where(User.email == data.email))
         user = res.scalar_one_or_none()
-    if user is None or not verify_password(data.password, user.password_hash):
-        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Неверный email или пароль")
-    if not user.email_verified:
-        raise HTTPException(
-            status.HTTP_403_FORBIDDEN,
-            "Email не подтверждён. Проверьте почту или запросите письмо повторно.",
-        )
-    _set_auth_cookie(response, create_access_token(str(user.id)))
-    return user
+        # неподтверждённых в `users` нет -> простая проверка пароля
+        if user is None or not verify_password(data.password, user.password_hash):
+            raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Неверный email или пароль")
+        _set_auth_cookie(response, create_access_token(str(user.id)))
+        return user
 
 
-@router.post("/verify-email")
-async def verify_email(data: VerifyToken):
+@router.post("/verify-email", response_model=UserOut)
+async def verify_email(data: VerifyCode, response: Response):
     async with async_session() as session:
-        res = await session.execute(
-            select(EmailVerificationToken).where(EmailVerificationToken.token == data.token)
+        # уже полноценный пользователь?
+        ures = await session.execute(select(User).where(User.email == data.email))
+        if ures.scalar_one_or_none() is not None:
+            raise HTTPException(status.HTTP_400_BAD_REQUEST, "Email уже подтверждён, войдите")
+
+        pres = await session.execute(
+            select(PendingRegistration).where(PendingRegistration.email == data.email)
         )
-        tok = res.scalar_one_or_none()
-        if tok is None or tok.used_at is not None or tok.expires_at < _now():
-            raise HTTPException(status.HTTP_400_BAD_REQUEST, "Ссылка недействительна или истекла")
-        user = await session.get(User, tok.user_id)
-        user.email_verified = True
-        tok.used_at = _now()
+        pending = pres.scalar_one_or_none()
+        if pending is None:
+            raise HTTPException(status.HTTP_400_BAD_REQUEST,
+                                "Регистрация не начата или код истёк. Зарегистрируйтесь заново.")
+        if pending.expires_at < _now():
+            await session.delete(pending)
+            await session.commit()
+            raise HTTPException(status.HTTP_400_BAD_REQUEST, "Код истёк. Зарегистрируйтесь заново.")
+        if pending.attempts >= settings.MAX_VERIFY_ATTEMPTS:
+            raise HTTPException(status.HTTP_400_BAD_REQUEST,
+                                "Слишком много попыток. Зарегистрируйтесь заново.")
+        if not secrets.compare_digest(pending.code, (data.code or "").strip()):
+            pending.attempts += 1
+            await session.commit()
+            raise HTTPException(status.HTTP_400_BAD_REQUEST, "Неверный код")
+
+        # код верный -> заявка превращается в настоящего пользователя
+        user = User(
+            email=pending.email,
+            password_hash=pending.password_hash,
+            tier="free",
+            email_verified=True,
+        )
+        session.add(user)
+        await session.delete(pending)
         await session.commit()
-    return {"status": "ok", "message": "Email подтверждён"}
+        await session.refresh(user)
+        # есть доступ к почте -> сразу логиним
+        _set_auth_cookie(response, create_access_token(str(user.id)))
+        return user
 
 
 @router.post("/resend-verification")
 async def resend_verification(data: EmailIn):
-    # Единый ответ независимо от существования адреса — без утечки базы пользователей.
+    # Единый ответ независимо от существования заявки — без утечки базы пользователей.
     async with async_session() as session:
-        res = await session.execute(select(User).where(User.email == data.email))
-        user = res.scalar_one_or_none()
-        if user is not None and not user.email_verified:
-            last = await session.execute(
-                select(EmailVerificationToken.created_at)
-                .where(EmailVerificationToken.user_id == user.id)
-                .order_by(EmailVerificationToken.created_at.desc())
-                .limit(1)
-            )
-            last_at = last.scalar_one_or_none()
-            cooldown = settings.RESEND_COOLDOWN_SECONDS
-            if last_at is None or (_now() - last_at).total_seconds() >= cooldown:
-                token = await _create_token(session, user.id)
-                await send_verification_email(user.email, token)
+        pres = await session.execute(
+            select(PendingRegistration).where(PendingRegistration.email == data.email)
+        )
+        pending = pres.scalar_one_or_none()
+        if pending is not None and (_now() - pending.created_at).total_seconds() >= settings.RESEND_COOLDOWN_SECONDS:
+            code = _generate_code()
+            try:
+                await send_verification_email(pending.email, code)
+            except Exception as exc:  # noqa: BLE001
+                logger.warning("resend: письмо не отправлено (to=%s): %s", pending.email, exc)
+            else:  # обновляем код только если письмо реально ушло (старый код остаётся валиден)
+                pending.code = code
+                pending.attempts = 0
+                pending.expires_at = _code_expiry()
+                pending.created_at = _now()
+                await session.commit()
     return {"status": "ok",
-            "message": "Если адрес зарегистрирован и не подтверждён, письмо отправлено"}
+            "message": "Если регистрация начата и не подтверждена, код отправлен"}
 
 
 @router.post("/logout")
