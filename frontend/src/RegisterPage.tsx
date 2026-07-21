@@ -7,6 +7,7 @@ export default function RegisterPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -14,6 +15,7 @@ export default function RegisterPage() {
     e.preventDefault();
     setError(null);
     if (password.length < 6) { setError("Пароль не короче 6 символов"); return; }
+    if (password !== confirmPassword) { setError("Пароли не совпадают"); return; }
     setBusy(true);
     try {
       await register(email, password);
@@ -34,6 +36,8 @@ export default function RegisterPage() {
         <input type="email" required placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)}
           className="mb-3 w-full rounded-lg border border-violet-200 px-3 py-2.5 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-200" />
         <input type="password" required placeholder="Пароль (минимум 6 символов)" value={password} onChange={(e) => setPassword(e.target.value)}
+          className="mb-3 w-full rounded-lg border border-violet-200 px-3 py-2.5 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-200" />
+        <input type="password" required placeholder="Повторите пароль" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}
           className="mb-4 w-full rounded-lg border border-violet-200 px-3 py-2.5 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-200" />
         <button type="submit" disabled={busy}
           className="w-full rounded-full bg-violet-600 py-2.5 font-medium text-white hover:bg-violet-700 disabled:opacity-60">
