@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { GiftCard as GiftCardType } from "../types";
+import { trackBuyClick } from "../api";
 
 function formatPrice(price: number | null, currency: string): string {
   if (price == null) return "Цена по запросу";
@@ -106,6 +107,7 @@ export default function GiftCard({
             href={card.product_url}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackBuyClick(card.id)}
             className="inline-flex items-center rounded-full bg-violet-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-violet-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600"
           >
             Купить

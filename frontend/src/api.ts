@@ -140,6 +140,12 @@ export async function removeFromWishlistItem(itemId: number): Promise<void> {
   await apiFetch(`/api/wishlist/${itemId}`, { method: "DELETE" });
 }
 
+// Клик «Купить» — сигнал популярности для рейтинга. Fire-and-forget:
+// keepalive держит запрос при уходе на страницу магазина, ошибку глотаем.
+export function trackBuyClick(productId: number): void {
+  apiFetch(`/api/track/buy/${productId}`, { method: "POST", keepalive: true }).catch(() => {});
+}
+
 export async function searchGifts(query: string): Promise<GiftCard[]> {
   const res = await apiFetch("/api/search", {
     method: "POST",

@@ -105,6 +105,9 @@ class Product(Base):
     # Основная (старая) цена — в price. Скидка в процентах; цена со скидкой
     # считается как price * (1 - discount_percent/100). 0 -> скидки нет.
     discount_percent: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
+    # Сигнал популярности: сколько раз нажали «Купить». Вместе с числом
+    # добавлений в желаемое (COUNT по wishlist) поднимает товар в выдаче.
+    buy_clicks: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
     currency: Mapped[str] = mapped_column(String(8), nullable=False, default="RUB")
     image_url: Mapped[str | None] = mapped_column(String(1024), nullable=True)
     local_image_path: Mapped[str | None] = mapped_column(String(1024), nullable=True)

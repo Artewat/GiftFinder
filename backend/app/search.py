@@ -21,10 +21,10 @@ import re
 import time
 from typing import Any, Optional
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 
 from app.db import async_session
-from app.models import Category, Product
+from app.models import Category, Product, WishlistItem
 from app.embeddings import embed_query
 from app.llm import chat_json  # TODO[LLM]: async def chat_json(system, user) -> str
 
@@ -236,6 +236,50 @@ async def _curate(query: str, intent: dict, candidates: list[Product]) -> list[d
     return cards
 
 
+# Вес популярности при итоговом ранжировании. 0 -> чистая релевантность,
+# больше -> сильнее поднимает популярные товары. 0.5 поднимает популярное
+# ВНУТРИ релевантной выдачи, но не выносит нерелевантный товар наверх.
+POP_WEIGHT = 0.5
+
+
+async def _popularity(session, ids: list[int]) -> dict[int, int]:
+    """Популярность товаров: клики «Купить» (buy_clicks) + число добавлений
+    в желаемое (COUNT по wishlist). Возвращает {product_id: score}."""
+    if not ids:
+        return {}
+    res = await session.execute(
+        select(Product.id, Product.buy_clicks).where(Product.id.in_(ids))
+    )
+    pop: dict[int, int] = {pid: (clicks or 0) for pid, clicks in res.all()}
+    res_w = await session.execute(
+        select(WishlistItem.product_id, func.count())
+        .where(WishlistItem.product_id.in_(ids))
+        .group_by(WishlistItem.product_id)
+    )
+    for pid, cnt in res_w.all():
+        pop[pid] = pop.get(pid, 0) + cnt
+    return pop
+
+
+def _apply_popularity(
+    cards: list[dict], pop_map: dict[int, int], weight: float = POP_WEIGHT
+) -> list[dict]:
+    """Пересортировка выдачи: релевантность (порядок от модели) + бонус за
+    популярность. Стабильно, не мутирует вход. Пустой/одиночный список — как есть."""
+    n = len(cards)
+    if n < 2:
+        return cards
+    max_pop = max((pop_map.get(c["id"], 0) for c in cards), default=0)
+
+    def score(i: int) -> float:
+        relevance = 1 - i / n                       # i=0 (верх) -> релевантнее
+        popularity = pop_map.get(cards[i]["id"], 0) / max_pop if max_pop else 0
+        return relevance + weight * popularity
+
+    order = sorted(range(n), key=score, reverse=True)
+    return [cards[i] for i in order]
+
+
 def _card(p: Product, reason: Optional[str]) -> dict:
     return {
         "id": p.id,
@@ -282,6 +326,10 @@ async def search_gifts(query: str) -> list[dict]:
             return []
 
         cards = await _curate(query, intent, candidates)
+
+        # рейтинг популярности поднимает востребованные товары внутри выдачи
+        pop_map = await _popularity(session, [c["id"] for c in cards])
+        cards = _apply_popularity(cards, pop_map)
         t3 = time.perf_counter()
 
         logger.info(

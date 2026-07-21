@@ -44,7 +44,7 @@ async def test_understand_degrades_on_garbage(monkeypatch):
 
 def _fake_product(pid):
     return SimpleNamespace(
-        id=pid, title=f"Товар {pid}", price=100.0, currency="RUB",
+        id=pid, title=f"Товар {pid}", price=100.0, discount_percent=0, currency="RUB",
         image_url=None, product_url=f"https://x/{pid}", source="test",
         description="описание",
     )
@@ -70,3 +70,29 @@ async def test_curate_fallback_on_bad_json(monkeypatch):
     cards = await search._curate("q", {}, cands)
     assert len(cards) == 8                       # фолбэк: топ-8 по вектору
     assert all(c["reason"] is None for c in cards)
+
+
+def test_apply_popularity_lifts_popular():
+    # товар 3 (последний по релевантности) с высокой популярностью поднимается
+    cards = [{"id": 1}, {"id": 2}, {"id": 3}]
+    out = search._apply_popularity(cards, {3: 100})
+    assert [c["id"] for c in out] == [1, 3, 2]
+
+
+def test_apply_popularity_no_signal_keeps_order():
+    cards = [{"id": 1}, {"id": 2}, {"id": 3}]
+    out = search._apply_popularity(cards, {})
+    assert [c["id"] for c in out] == [1, 2, 3]
+
+
+def test_apply_popularity_does_not_override_top_relevance():
+    # умеренная популярность у последнего не выносит его выше топ-релевантного
+    cards = [{"id": 1}, {"id": 2}, {"id": 3}]
+    out = search._apply_popularity(cards, {3: 5})
+    assert out[0]["id"] == 1
+
+
+def test_apply_popularity_short_lists_unchanged():
+    assert search._apply_popularity([], {}) == []
+    one = [{"id": 1}]
+    assert search._apply_popularity(one, {1: 99}) == one

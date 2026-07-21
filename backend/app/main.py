@@ -16,6 +16,7 @@ from app.usage import FREE_DAILY_LIMIT, get_today_count, increment_usage
 from app.routers.auth import router as auth_router
 from app.routers.billing import router as billing_router
 from app.routers.wishlist import router as wishlist_router
+from app.routers.track import router as track_router
 
 logging.basicConfig(level=logging.INFO)
 
@@ -41,6 +42,7 @@ app.add_middleware(
 app.include_router(auth_router)
 app.include_router(billing_router)
 app.include_router(wishlist_router)
+app.include_router(track_router)
 
 
 @app.get("/api/health", response_model=HealthResponse)
