@@ -36,13 +36,13 @@ export default function GiftCard({
     : card.price;
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-2xl border border-violet-100 bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md motion-reduce:transform-none motion-reduce:transition-none">
-      <div className="relative aspect-[4/3] overflow-hidden bg-violet-50">
+    <article className="group flex flex-col overflow-hidden rounded-2xl border border-edge bg-surface shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md motion-reduce:transform-none motion-reduce:transition-none">
+      <div className="relative aspect-[4/3] overflow-hidden bg-surface-muted">
         {onToggleWishlist && (
           <button
             onClick={onToggleWishlist}
             aria-label={inWishlist ? "Убрать из избранного" : "В избранное"}
-            className="absolute right-2 top-2 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 shadow-sm transition hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600"
+            className="absolute right-2 top-2 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-surface/90 shadow-sm transition hover:bg-surface focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600"
           >
             <svg
               viewBox="0 0 24 24"
@@ -75,31 +75,31 @@ export default function GiftCard({
       </div>
 
       <div className="flex flex-1 flex-col gap-3 p-4">
-        <h3 className="text-base font-semibold leading-snug text-violet-950">
+        <h3 className="text-base font-semibold leading-snug text-fg">
           {card.title}
         </h3>
 
         {card.reason && (
-          <p className="text-sm leading-relaxed text-slate-600">{card.reason}</p>
+          <p className="text-sm leading-relaxed text-fg-muted">{card.reason}</p>
         )}
 
         <div className="mt-auto flex items-end justify-between gap-3 pt-2">
           {hasDiscount ? (
             <div className="flex flex-col leading-tight">
-              <span className="text-sm text-slate-400 line-through">
+              <span className="text-sm text-fg-faint line-through">
                 {formatPrice(card.price, card.currency)}
               </span>
               <span className="flex items-center gap-2">
-                <span className="text-lg font-bold text-rose-600">
+                <span className="text-lg font-bold text-sale">
                   {formatPrice(finalPrice, card.currency)}
                 </span>
-                <span className="rounded-md bg-rose-100 px-1.5 py-0.5 text-xs font-semibold text-rose-600">
+                <span className="rounded-md bg-sale-bg px-1.5 py-0.5 text-xs font-semibold text-sale">
                   −{card.discount_percent}%
                 </span>
               </span>
             </div>
           ) : (
-            <span className="text-lg font-bold text-violet-700">
+            <span className="text-lg font-bold text-link">
               {formatPrice(card.price, card.currency)}
             </span>
           )}

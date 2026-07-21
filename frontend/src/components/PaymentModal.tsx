@@ -118,7 +118,7 @@ export default function PaymentModal({ amountLabel, onClose, onConfirm }: Props)
       `w-full rounded-lg border px-3 py-2.5 outline-none focus:ring-2 ${extra} ` +
       (bad
         ? "border-rose-400 focus:border-rose-400 focus:ring-rose-200"
-        : "border-violet-200 focus:border-violet-400 focus:ring-violet-200")
+        : "border-edge-strong focus:border-violet-400 focus:ring-violet-200")
     );
   }
 
@@ -153,13 +153,13 @@ export default function PaymentModal({ amountLabel, onClose, onConfirm }: Props)
         onClick={() => !processing && onClose()}
         className="absolute inset-0 cursor-default bg-violet-950/40 backdrop-blur-sm"
       />
-      <div className="relative w-full max-w-md rounded-t-2xl bg-white p-6 shadow-xl sm:rounded-2xl">
+      <div className="relative w-full max-w-md rounded-t-2xl bg-surface p-6 shadow-xl sm:rounded-2xl">
         <div className="flex items-start justify-between">
           <div>
-            <h2 id="pay-title" className="text-xl font-bold text-violet-950">
+            <h2 id="pay-title" className="text-xl font-bold text-fg">
               Оформление Premium
             </h2>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-sm text-fg-subtle">
               Безлимитный поиск · {amountLabel}
             </p>
           </div>
@@ -168,7 +168,7 @@ export default function PaymentModal({ amountLabel, onClose, onConfirm }: Props)
             onClick={onClose}
             disabled={processing}
             aria-label="Закрыть"
-            className="-mr-1 -mt-1 inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-violet-50 hover:text-violet-700 disabled:opacity-40"
+            className="-mr-1 -mt-1 inline-flex h-9 w-9 items-center justify-center rounded-lg text-fg-faint transition-colors hover:bg-surface-muted hover:text-link disabled:opacity-40"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
               <line x1="6" y1="6" x2="18" y2="18" />
@@ -177,14 +177,14 @@ export default function PaymentModal({ amountLabel, onClose, onConfirm }: Props)
           </button>
         </div>
 
-        <div className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-700">
+        <div className="mt-3 rounded-lg bg-warn-bg px-3 py-2 text-xs text-warn-body">
           Демо-оплата: данные карты никуда не отправляются. Введите любые цифры —
           например, 4111 1111 1111 1111.
         </div>
 
         <form onSubmit={pay} noValidate className="mt-4 space-y-3">
           <label className="block">
-            <span className="mb-1 block text-sm font-medium text-violet-950">Номер карты</span>
+            <span className="mb-1 block text-sm font-medium text-fg">Номер карты</span>
             <div className="relative">
               <input
                 inputMode="numeric"
@@ -197,19 +197,19 @@ export default function PaymentModal({ amountLabel, onClose, onConfirm }: Props)
                 className={inputCls("number", "pr-16")}
               />
               {brand && (
-                <span className="pointer-events-none absolute right-3 top-[1.35rem] -translate-y-1/2 text-xs font-semibold text-violet-500">
+                <span className="pointer-events-none absolute right-3 top-[1.35rem] -translate-y-1/2 text-xs font-semibold text-accent">
                   {brand}
                 </span>
               )}
             </div>
             {show("number") && (
-              <p className="mt-1 text-xs text-rose-600">{show("number")}</p>
+              <p className="mt-1 text-xs text-sale">{show("number")}</p>
             )}
           </label>
 
           <div className="flex gap-3">
             <label className="block flex-1">
-              <span className="mb-1 block text-sm font-medium text-violet-950">Срок</span>
+              <span className="mb-1 block text-sm font-medium text-fg">Срок</span>
               <input
                 inputMode="numeric"
                 autoComplete="cc-exp"
@@ -221,11 +221,11 @@ export default function PaymentModal({ amountLabel, onClose, onConfirm }: Props)
                 className={inputCls("expiry")}
               />
               {show("expiry") && (
-                <p className="mt-1 text-xs text-rose-600">{show("expiry")}</p>
+                <p className="mt-1 text-xs text-sale">{show("expiry")}</p>
               )}
             </label>
             <label className="block w-24">
-              <span className="mb-1 block text-sm font-medium text-violet-950">CVC</span>
+              <span className="mb-1 block text-sm font-medium text-fg">CVC</span>
               <input
                 inputMode="numeric"
                 autoComplete="cc-csc"
@@ -239,11 +239,11 @@ export default function PaymentModal({ amountLabel, onClose, onConfirm }: Props)
             </label>
           </div>
           {show("cvc") && (
-            <p className="-mt-1 text-xs text-rose-600">{show("cvc")}</p>
+            <p className="-mt-1 text-xs text-sale">{show("cvc")}</p>
           )}
 
           <label className="block">
-            <span className="mb-1 block text-sm font-medium text-violet-950">Имя на карте</span>
+            <span className="mb-1 block text-sm font-medium text-fg">Имя на карте</span>
             <input
               autoComplete="cc-name"
               placeholder="IVAN IVANOV"
@@ -254,12 +254,12 @@ export default function PaymentModal({ amountLabel, onClose, onConfirm }: Props)
               className={inputCls("name", "uppercase placeholder:normal-case")}
             />
             {show("name") && (
-              <p className="mt-1 text-xs text-rose-600">{show("name")}</p>
+              <p className="mt-1 text-xs text-sale">{show("name")}</p>
             )}
           </label>
 
           {error && (
-            <p className="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700">{error}</p>
+            <p className="rounded-lg bg-danger-bg px-3 py-2 text-sm text-danger">{error}</p>
           )}
 
           <button
@@ -269,7 +269,7 @@ export default function PaymentModal({ amountLabel, onClose, onConfirm }: Props)
           >
             {processing ? "Обработка платежа…" : `Оплатить ${amountLabel}`}
           </button>
-          <p className="text-center text-xs text-slate-400">🔒 Демонстрационная оплата, реальное списание не производится</p>
+          <p className="text-center text-xs text-fg-faint">🔒 Демонстрационная оплата, реальное списание не производится</p>
         </form>
       </div>
     </div>

@@ -107,7 +107,7 @@ export default function HomePage() {
   const ctaTarget = user ? "/search" : "/register";
 
   return (
-    <div className="min-h-screen bg-[#F5F3FA] text-violet-950">
+    <div className="min-h-screen bg-canvas text-fg">
       {/* Навигация */}
       <NavBar active="home" />
 
@@ -118,7 +118,7 @@ export default function HomePage() {
           className="pointer-events-none absolute inset-x-0 -top-24 mx-auto h-72 max-w-3xl rounded-full bg-gradient-to-br from-violet-300 via-fuchsia-200 to-rose-200 opacity-50 blur-3xl"
         />
         <div className="relative mx-auto max-w-3xl px-4 pb-16 pt-12 text-center sm:pb-20 sm:pt-20">
-          <p className="mb-3 inline-block rounded-full border border-violet-200 bg-white/70 px-4 py-1 text-sm font-medium text-violet-600 backdrop-blur">
+          <p className="mb-3 inline-block rounded-full border border-edge-strong bg-surface/70 px-4 py-1 text-sm font-medium text-link backdrop-blur">
             Подарок за пару минут — с ИИ-ассистентом
           </p>
           <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-6xl">
@@ -128,7 +128,7 @@ export default function HomePage() {
               что подарить?
             </span>
           </h1>
-          <p className="mx-auto mt-5 max-w-xl text-lg text-slate-600">
+          <p className="mx-auto mt-5 max-w-xl text-lg text-fg-muted">
             Опишите получателя, повод и бюджет — умный ассистент подберёт идеи
             подарков, объяснит выбор и покажет, где их купить.
           </p>
@@ -139,7 +139,7 @@ export default function HomePage() {
             >
               Начать подбор
             </Link>
-            <span className="text-sm text-slate-500">
+            <span className="text-sm text-fg-subtle">
               Бесплатно — 5 подборов в день
             </span>
           </div>
@@ -148,13 +148,13 @@ export default function HomePage() {
 
       {/* Полоса статистики */}
       <section className="mx-auto -mt-4 max-w-5xl px-4 pb-4">
-        <div className="grid grid-cols-2 gap-3 rounded-3xl border border-violet-100 bg-white/70 p-6 backdrop-blur sm:grid-cols-4 sm:gap-6">
+        <div className="grid grid-cols-2 gap-3 rounded-3xl border border-edge bg-surface/70 p-6 backdrop-blur sm:grid-cols-4 sm:gap-6">
           {STATS.map((s) => (
             <div key={s.label} className="text-center">
-              <div className="text-2xl font-bold text-violet-700 sm:text-3xl">
+              <div className="text-2xl font-bold text-link sm:text-3xl">
                 {s.value}
               </div>
-              <div className="mt-1 text-xs leading-snug text-slate-500 sm:text-sm">
+              <div className="mt-1 text-xs leading-snug text-fg-subtle sm:text-sm">
                 {s.label}
               </div>
             </div>
@@ -167,22 +167,22 @@ export default function HomePage() {
         <h2 className="text-center text-2xl font-bold tracking-tight sm:text-3xl">
           Как это работает
         </h2>
-        <p className="mx-auto mt-3 max-w-xl text-center text-slate-600">
+        <p className="mx-auto mt-3 max-w-xl text-center text-fg-muted">
           Три простых шага — от свободного описания до готового списка идей.
         </p>
         <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-3">
           {STEPS.map((s) => (
             <div
               key={s.n}
-              className="rounded-2xl border border-violet-100 bg-white p-6 shadow-sm"
+              className="rounded-2xl border border-edge bg-surface p-6 shadow-sm"
             >
               <div className="flex h-11 w-11 items-center justify-center rounded-full bg-violet-600 text-lg font-bold text-white">
                 {s.n}
               </div>
-              <h3 className="mt-4 text-lg font-semibold text-violet-950">
+              <h3 className="mt-4 text-lg font-semibold text-fg">
                 {s.title}
               </h3>
-              <p className="mt-2 text-sm leading-relaxed text-slate-600">
+              <p className="mt-2 text-sm leading-relaxed text-fg-muted">
                 {s.text}
               </p>
             </div>
@@ -195,7 +195,7 @@ export default function HomePage() {
         <h2 className="text-center text-2xl font-bold tracking-tight sm:text-3xl">
           Почему GiftFinder
         </h2>
-        <p className="mx-auto mt-3 max-w-xl text-center text-slate-600">
+        <p className="mx-auto mt-3 max-w-xl text-center text-fg-muted">
           Не каталог с фильтрами, а ассистент, который думает о подарке вместе с
           вами.
         </p>
@@ -203,15 +203,15 @@ export default function HomePage() {
           {FEATURES.map((f) => (
             <div
               key={f.title}
-              className="rounded-2xl border border-violet-100 bg-white p-6 shadow-sm transition-shadow hover:shadow-md"
+              className="rounded-2xl border border-edge bg-surface p-6 shadow-sm transition-shadow hover:shadow-md"
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-50 text-2xl">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-surface-muted text-2xl">
                 {f.icon}
               </div>
-              <h3 className="mt-4 text-base font-semibold text-violet-950">
+              <h3 className="mt-4 text-base font-semibold text-fg">
                 {f.title}
               </h3>
-              <p className="mt-2 text-sm leading-relaxed text-slate-600">
+              <p className="mt-2 text-sm leading-relaxed text-fg-muted">
                 {f.text}
               </p>
             </div>
@@ -221,11 +221,11 @@ export default function HomePage() {
 
       {/* Поводы */}
       <section className="mx-auto max-w-5xl px-4 pb-12 sm:pb-16">
-        <div className="rounded-3xl border border-violet-100 bg-white/60 px-6 py-10 sm:px-10">
+        <div className="rounded-3xl border border-edge bg-surface/60 px-6 py-10 sm:px-10">
           <h2 className="text-center text-2xl font-bold tracking-tight sm:text-3xl">
             Подойдёт для любого повода
           </h2>
-          <p className="mx-auto mt-3 max-w-xl text-center text-slate-600">
+          <p className="mx-auto mt-3 max-w-xl text-center text-fg-muted">
             День рождения, праздник или просто хочется порадовать близкого — опишите
             ситуацию своими словами.
           </p>
@@ -233,7 +233,7 @@ export default function HomePage() {
             {OCCASIONS.map((o) => (
               <span
                 key={o}
-                className="rounded-full border border-violet-200 bg-white px-4 py-1.5 text-sm font-medium text-violet-700"
+                className="rounded-full border border-edge-strong bg-surface px-4 py-1.5 text-sm font-medium text-link"
               >
                 {o}
               </span>
@@ -247,7 +247,7 @@ export default function HomePage() {
         <h2 className="text-center text-2xl font-bold tracking-tight sm:text-3xl">
           Примеры запросов
         </h2>
-        <p className="mx-auto mt-3 max-w-xl text-center text-slate-600">
+        <p className="mx-auto mt-3 max-w-xl text-center text-fg-muted">
           Пишите так, как рассказали бы другу — ассистент поймёт.
         </p>
         <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -255,11 +255,11 @@ export default function HomePage() {
             <Link
               key={ex}
               to={ctaTarget}
-              className="group flex items-center gap-3 rounded-2xl border border-violet-100 bg-white p-4 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:border-violet-300 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600 motion-reduce:transform-none"
+              className="group flex items-center gap-3 rounded-2xl border border-edge bg-surface p-4 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:border-edge-strong hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600 motion-reduce:transform-none"
             >
               <span className="text-lg">🔍</span>
-              <span className="text-sm text-violet-950">«{ex}»</span>
-              <span className="ml-auto text-violet-400 transition-transform group-hover:translate-x-0.5">
+              <span className="text-sm text-fg">«{ex}»</span>
+              <span className="ml-auto text-accent transition-transform group-hover:translate-x-0.5">
                 →
               </span>
             </Link>
@@ -276,15 +276,15 @@ export default function HomePage() {
           {FAQ.map((item) => (
             <details
               key={item.q}
-              className="group rounded-2xl border border-violet-100 bg-white p-5 shadow-sm [&_summary::-webkit-details-marker]:hidden"
+              className="group rounded-2xl border border-edge bg-surface p-5 shadow-sm [&_summary::-webkit-details-marker]:hidden"
             >
-              <summary className="flex cursor-pointer items-center justify-between gap-4 font-medium text-violet-950">
+              <summary className="flex cursor-pointer items-center justify-between gap-4 font-medium text-fg">
                 {item.q}
-                <span className="text-violet-400 transition-transform group-open:rotate-45">
+                <span className="text-accent transition-transform group-open:rotate-45">
                   +
                 </span>
               </summary>
-              <p className="mt-3 text-sm leading-relaxed text-slate-600">
+              <p className="mt-3 text-sm leading-relaxed text-fg-muted">
                 {item.a}
               </p>
             </details>
@@ -303,7 +303,7 @@ export default function HomePage() {
           </p>
           <Link
             to={ctaTarget}
-            className="mt-7 inline-block rounded-full bg-white px-8 py-4 text-base font-semibold text-violet-700 shadow-lg transition-transform hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white motion-reduce:transform-none"
+            className="mt-7 inline-block rounded-full bg-surface px-8 py-4 text-base font-semibold text-link shadow-lg transition-transform hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white motion-reduce:transform-none"
           >
             Начать подбор
           </Link>
@@ -311,9 +311,9 @@ export default function HomePage() {
       </section>
 
       {/* Футер */}
-      <footer className="border-t border-violet-100 py-8">
-        <div className="mx-auto max-w-5xl px-4 text-center text-sm text-slate-500">
-          <span className="font-medium text-violet-700">🎁 GiftFinder</span>
+      <footer className="border-t border-edge py-8">
+        <div className="mx-auto max-w-5xl px-4 text-center text-sm text-fg-subtle">
+          <span className="font-medium text-link">🎁 GiftFinder</span>
           {" — "}умный подбор подарков с ИИ-ассистентом · MVP
         </div>
       </footer>

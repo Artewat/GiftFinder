@@ -1,3 +1,77 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/*
+  Семантические токены темы — каналы RGB (для поддержки прозрачности в Tailwind).
+  Светлые значения = прежняя палитра (violet/slate/rose/amber), поэтому светлая
+  тема остаётся пиксель-в-пиксель. Тёмная — переопределение тех же переменных.
+*/
+@layer base {
+  :root {
+    --canvas: 245 243 250;          /* #F5F3FA */
+    --surface: 255 255 255;         /* white   */
+    --surface-muted: 245 243 255;   /* violet-50  */
+    --surface-accent: 237 233 254;  /* violet-100 */
+    --edge: 237 233 254;            /* violet-100 */
+    --edge-strong: 221 214 254;     /* violet-200 */
+    --fg: 46 16 101;                /* violet-950 */
+    --fg-muted: 71 85 105;          /* slate-600  */
+    --fg-subtle: 100 116 139;       /* slate-500  */
+    --fg-faint: 148 163 184;        /* slate-400  */
+    --link: 109 40 217;             /* violet-700 */
+    --accent: 139 92 246;           /* violet-500 */
+    --sale: 225 29 72;              /* rose-600 */
+    --sale-bg: 255 228 230;         /* rose-100 */
+    --danger: 190 18 60;            /* rose-700 */
+    --danger-body: 225 29 72;       /* rose-600 */
+    --danger-bg: 255 241 242;       /* rose-50  */
+    --danger-edge: 254 205 211;     /* rose-200 */
+    --warn: 146 64 14;              /* amber-800 */
+    --warn-body: 180 83 9;          /* amber-700 */
+    --warn-bg: 255 251 235;         /* amber-50  */
+    --warn-edge: 253 230 138;       /* amber-200 */
+  }
+
+  .dark {
+    --canvas: 15 23 42;             /* slate-900 */
+    --surface: 30 41 59;            /* slate-800 */
+    --surface-muted: 30 41 59;      /* slate-800 */
+    --surface-accent: 51 65 85;     /* slate-700 */
+    --edge: 51 65 85;               /* slate-700 */
+    --edge-strong: 71 85 105;       /* slate-600 */
+    --fg: 241 245 249;              /* slate-100 */
+    --fg-muted: 203 213 225;        /* slate-300 */
+    --fg-subtle: 148 163 184;       /* slate-400 */
+    --fg-faint: 100 116 139;        /* slate-500 */
+    --link: 196 181 253;            /* violet-300 */
+    --accent: 167 139 250;          /* violet-400 */
+    --sale: 251 113 133;            /* rose-400 */
+    --sale-bg: 76 5 25;             /* rose-950 */
+    --danger: 253 164 175;          /* rose-300 */
+    --danger-body: 251 113 133;     /* rose-400 */
+    --danger-bg: 76 5 25;           /* rose-950 */
+    --danger-edge: 159 18 57;       /* rose-800 */
+    --warn: 253 230 138;            /* amber-200 */
+    --warn-body: 252 211 77;        /* amber-300 */
+    --warn-bg: 69 26 3;             /* amber-950 */
+    --warn-edge: 146 64 14;         /* amber-800 */
+  }
+
+  /* Поля ввода наследуют цвета темы (в светлой = прежние white/violet-950) */
+  input,
+  textarea,
+  select {
+    background-color: rgb(var(--surface));
+    color: rgb(var(--fg));
+  }
+  input::placeholder,
+  textarea::placeholder {
+    color: rgb(var(--fg-faint));
+  }
+
+  /* Плавный переход при переключении темы */
+  body {
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+}

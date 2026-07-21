@@ -85,20 +85,20 @@ export default function SearchPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F5F3FA] text-violet-950">
+    <div className="min-h-screen bg-canvas text-fg">
       {/* Навигация */}
       <NavBar active="search" />
 
       <div className="mx-auto max-w-6xl px-4 py-10 sm:py-14">
         {/* Шапка + поиск */}
         <header className="mx-auto max-w-2xl text-center">
-          <p className="mb-2 text-sm font-medium uppercase tracking-widest text-violet-500">
+          <p className="mb-2 text-sm font-medium uppercase tracking-widest text-accent">
             Умный подбор подарков
           </p>
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
             Опишите, кому и по какому поводу
           </h1>
-          <p className="mt-3 text-slate-600">
+          <p className="mt-3 text-fg-muted">
             Подберём идеи под получателя, повод и бюджет — и покажем, где купить.
           </p>
 
@@ -109,7 +109,7 @@ export default function SearchPage() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Например: подарок маме на юбилей до 5000 ₽"
-                className="w-full rounded-full border border-violet-200 bg-white px-5 py-3.5 text-base shadow-sm outline-none placeholder:text-slate-400 focus:border-violet-400 focus:ring-2 focus:ring-violet-200"
+                className="w-full rounded-full border border-edge-strong bg-surface px-5 py-3.5 text-base shadow-sm outline-none placeholder:text-fg-faint focus:border-violet-400 focus:ring-2 focus:ring-violet-200"
               />
               <button
                 type="submit"
@@ -122,15 +122,15 @@ export default function SearchPage() {
           </form>
 
           {usage && usage.tier === "free" && (
-            <p className="mt-3 text-center text-sm text-slate-500">
+            <p className="mt-3 text-center text-sm text-fg-subtle">
               Осталось поисков сегодня: {usage.remaining} из {usage.limit}
             </p>
           )}
 
           {limitReached && (
-            <div className="mx-auto mt-6 max-w-md rounded-2xl border border-amber-200 bg-amber-50 p-5 text-center">
-              <p className="font-medium text-amber-800">Дневной лимит поисков исчерпан</p>
-              <p className="mt-1 text-sm text-amber-700">
+            <div className="mx-auto mt-6 max-w-md rounded-2xl border border-warn-edge bg-warn-bg p-5 text-center">
+              <p className="font-medium text-warn">Дневной лимит поисков исчерпан</p>
+              <p className="mt-1 text-sm text-warn-body">
                 Оформите premium для безлимитного поиска.
               </p>
               <Link
@@ -151,7 +151,7 @@ export default function SearchPage() {
                     setQuery(ex);
                     run(ex);
                   }}
-                  className="rounded-full border border-violet-200 bg-white px-4 py-1.5 text-sm text-violet-700 transition-colors hover:border-violet-300 hover:bg-violet-50"
+                  className="rounded-full border border-edge-strong bg-surface px-4 py-1.5 text-sm text-link transition-colors hover:border-edge-strong hover:bg-surface-muted"
                 >
                   {ex}
                 </button>
@@ -165,11 +165,11 @@ export default function SearchPage() {
           {status === "loading" && <SkeletonGrid />}
 
           {status === "error" && (
-            <div className="mx-auto max-w-md rounded-2xl border border-rose-200 bg-rose-50 p-6 text-center">
-              <p className="font-medium text-rose-700">
+            <div className="mx-auto max-w-md rounded-2xl border border-danger-edge bg-danger-bg p-6 text-center">
+              <p className="font-medium text-danger">
                 Не удалось выполнить поиск
               </p>
-              <p className="mt-1 text-sm text-rose-600">
+              <p className="mt-1 text-sm text-sale">
                 Проверьте, что сервер запущен, и попробуйте ещё раз.
               </p>
               <button
@@ -182,8 +182,8 @@ export default function SearchPage() {
           )}
 
           {status === "done" && results.length === 0 && (
-            <div className="mx-auto max-w-md text-center text-slate-500">
-              <p className="text-lg font-medium text-violet-950">
+            <div className="mx-auto max-w-md text-center text-fg-subtle">
+              <p className="text-lg font-medium text-fg">
                 Ничего не подобралось
               </p>
               <p className="mt-1 text-sm">
@@ -195,7 +195,7 @@ export default function SearchPage() {
 
           {status === "done" && results.length > 0 && (
             <>
-              <p className="mb-5 text-sm text-slate-500">
+              <p className="mb-5 text-sm text-fg-subtle">
                 Идеи по запросу «{lastQuery}»
               </p>
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -222,13 +222,13 @@ function SkeletonGrid() {
       {Array.from({ length: 6 }).map((_, i) => (
         <div
           key={i}
-          className="overflow-hidden rounded-2xl border border-violet-100 bg-white"
+          className="overflow-hidden rounded-2xl border border-edge bg-surface"
         >
-          <div className="aspect-[4/3] animate-pulse bg-violet-100 motion-reduce:animate-none" />
+          <div className="aspect-[4/3] animate-pulse bg-surface-accent motion-reduce:animate-none" />
           <div className="space-y-3 p-4">
-            <div className="h-4 w-3/4 animate-pulse rounded bg-violet-100 motion-reduce:animate-none" />
-            <div className="h-3 w-full animate-pulse rounded bg-violet-50 motion-reduce:animate-none" />
-            <div className="h-3 w-2/3 animate-pulse rounded bg-violet-50 motion-reduce:animate-none" />
+            <div className="h-4 w-3/4 animate-pulse rounded bg-surface-accent motion-reduce:animate-none" />
+            <div className="h-3 w-full animate-pulse rounded bg-surface-muted motion-reduce:animate-none" />
+            <div className="h-3 w-2/3 animate-pulse rounded bg-surface-muted motion-reduce:animate-none" />
           </div>
         </div>
       ))}
