@@ -102,6 +102,9 @@ class Product(Base):
     title: Mapped[str] = mapped_column(String(512), nullable=False)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     price: Mapped[float] = mapped_column(Numeric(12, 2), nullable=False)
+    # Основная (старая) цена — в price. Скидка в процентах; цена со скидкой
+    # считается как price * (1 - discount_percent/100). 0 -> скидки нет.
+    discount_percent: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
     currency: Mapped[str] = mapped_column(String(8), nullable=False, default="RUB")
     image_url: Mapped[str | None] = mapped_column(String(1024), nullable=True)
     local_image_path: Mapped[str | None] = mapped_column(String(1024), nullable=True)

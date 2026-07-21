@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import random
 from datetime import datetime, timezone
 from urllib.parse import quote
 
@@ -33,6 +34,14 @@ from .registry import get_source
 from app.db import async_session
 from app.models import Category, Product
 from app.embeddings import embed_passage  # после рефактора embeddings.py
+
+
+def _demo_discount() -> int:
+    """Демо-скидка для нового товара: у ~70% товаров 10–50% (шаг 5), у остальных 0.
+    Фиды скидок не отдают — это витринная генерация для наглядности."""
+    if random.random() < 0.7:
+        return 10 + random.randint(0, 8) * 5
+    return 0
 
 
 def wrap_deeplink(url: str, template: str | None) -> str:
@@ -105,6 +114,9 @@ async def ingest(
                 product = Product(
                     source=source.source_name,
                     external_id=off.external_id,
+                    # Витрина: фиды скидок не отдают, поэтому новым товарам
+                    # проставляем демо-скидку (~40% товаров, 10–50%, шаг 5).
+                    discount_percent=_demo_discount(),
                 )
                 session.add(product)
                 added += 1

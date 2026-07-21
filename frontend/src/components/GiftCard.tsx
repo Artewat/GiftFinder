@@ -4,7 +4,7 @@ import type { GiftCard as GiftCardType } from "../types";
 function formatPrice(price: number | null, currency: string): string {
   if (price == null) return "Цена по запросу";
   const symbol = currency === "RUB" ? "₽" : currency;
-  return `${new Intl.NumberFormat("ru-RU").format(price)} ${symbol}`;
+  return `${new Intl.NumberFormat("ru-RU").format(Math.round(price))} ${symbol}`;
 }
 
 // мягкие градиенты-плейсхолдеры на случай, если картинка не загрузилась
@@ -28,6 +28,11 @@ export default function GiftCard({
   const [imgError, setImgError] = useState(false);
   const showImage = card.image_url && !imgError;
   const gradient = PLACEHOLDERS[card.id % PLACEHOLDERS.length];
+
+  const hasDiscount = card.discount_percent > 0 && card.price != null;
+  const finalPrice = hasDiscount
+    ? card.price! * (1 - card.discount_percent / 100)
+    : card.price;
 
   return (
     <article className="group flex flex-col overflow-hidden rounded-2xl border border-violet-100 bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md motion-reduce:transform-none motion-reduce:transition-none">
@@ -77,10 +82,26 @@ export default function GiftCard({
           <p className="text-sm leading-relaxed text-slate-600">{card.reason}</p>
         )}
 
-        <div className="mt-auto flex items-center justify-between gap-3 pt-2">
-          <span className="text-lg font-bold text-violet-700">
-            {formatPrice(card.price, card.currency)}
-          </span>
+        <div className="mt-auto flex items-end justify-between gap-3 pt-2">
+          {hasDiscount ? (
+            <div className="flex flex-col leading-tight">
+              <span className="text-sm text-slate-400 line-through">
+                {formatPrice(card.price, card.currency)}
+              </span>
+              <span className="flex items-center gap-2">
+                <span className="text-lg font-bold text-rose-600">
+                  {formatPrice(finalPrice, card.currency)}
+                </span>
+                <span className="rounded-md bg-rose-100 px-1.5 py-0.5 text-xs font-semibold text-rose-600">
+                  −{card.discount_percent}%
+                </span>
+              </span>
+            </div>
+          ) : (
+            <span className="text-lg font-bold text-violet-700">
+              {formatPrice(card.price, card.currency)}
+            </span>
+          )}
           <a
             href={card.product_url}
             target="_blank"
