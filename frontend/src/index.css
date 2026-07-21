@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Поля ввода без явного фона в тёмной теме — иначе браузер рисует их белыми */
+@layer base {
+  .dark input,
+  .dark textarea {
+    background-color: theme("colors.slate.800");
+    color: theme("colors.slate.100");
+    border-color: theme("colors.slate.700");
+  }
+  .dark input::placeholder,
+  .dark textarea::placeholder {
+    color: theme("colors.slate.500");
+  }
+}

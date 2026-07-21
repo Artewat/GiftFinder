@@ -4,7 +4,7 @@ import type { GiftCard as GiftCardType } from "../types";
 function formatPrice(price: number | null, currency: string): string {
   if (price == null) return "Цена по запросу";
   const symbol = currency === "RUB" ? "₽" : currency;
-  return `${new Intl.NumberFormat("ru-RU").format(price)} ${symbol}`;
+  return `${new Intl.NumberFormat("ru-RU").format(Math.round(price))} ${symbol}`;
 }
 
 // мягкие градиенты-плейсхолдеры на случай, если картинка не загрузилась
@@ -29,14 +29,19 @@ export default function GiftCard({
   const showImage = card.image_url && !imgError;
   const gradient = PLACEHOLDERS[card.id % PLACEHOLDERS.length];
 
+  const hasDiscount = card.discount_percent > 0 && card.price != null;
+  const finalPrice = hasDiscount
+    ? card.price! * (1 - card.discount_percent / 100)
+    : card.price;
+
   return (
-    <article className="group flex flex-col overflow-hidden rounded-2xl border border-violet-100 bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md motion-reduce:transform-none motion-reduce:transition-none">
-      <div className="relative aspect-[4/3] overflow-hidden bg-violet-50">
+    <article className="group flex flex-col overflow-hidden rounded-2xl border border-violet-100 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md motion-reduce:transform-none motion-reduce:transition-none">
+      <div className="relative aspect-[4/3] overflow-hidden bg-violet-50 dark:bg-slate-800">
         {onToggleWishlist && (
           <button
             onClick={onToggleWishlist}
             aria-label={inWishlist ? "Убрать из избранного" : "В избранное"}
-            className="absolute right-2 top-2 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 shadow-sm transition hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600"
+            className="absolute right-2 top-2 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 dark:bg-slate-800/90 shadow-sm transition hover:bg-white dark:hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600"
           >
             <svg
               viewBox="0 0 24 24"
@@ -69,18 +74,34 @@ export default function GiftCard({
       </div>
 
       <div className="flex flex-1 flex-col gap-3 p-4">
-        <h3 className="text-base font-semibold leading-snug text-violet-950">
+        <h3 className="text-base font-semibold leading-snug text-violet-950 dark:text-slate-100">
           {card.title}
         </h3>
 
         {card.reason && (
-          <p className="text-sm leading-relaxed text-slate-600">{card.reason}</p>
+          <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">{card.reason}</p>
         )}
 
-        <div className="mt-auto flex items-center justify-between gap-3 pt-2">
-          <span className="text-lg font-bold text-violet-700">
-            {formatPrice(card.price, card.currency)}
-          </span>
+        <div className="mt-auto flex items-end justify-between gap-3 pt-2">
+          {hasDiscount ? (
+            <div className="flex flex-col leading-tight">
+              <span className="text-sm text-slate-400 dark:text-slate-500 line-through">
+                {formatPrice(card.price, card.currency)}
+              </span>
+              <span className="flex items-center gap-2">
+                <span className="text-lg font-bold text-rose-600 dark:text-rose-400">
+                  {formatPrice(finalPrice, card.currency)}
+                </span>
+                <span className="rounded-md bg-rose-100 dark:bg-rose-950/40 px-1.5 py-0.5 text-xs font-semibold text-rose-600 dark:text-rose-300">
+                  −{card.discount_percent}%
+                </span>
+              </span>
+            </div>
+          ) : (
+            <span className="text-lg font-bold text-violet-700 dark:text-violet-300">
+              {formatPrice(card.price, card.currency)}
+            </span>
+          )}
           <a
             href={card.product_url}
             target="_blank"

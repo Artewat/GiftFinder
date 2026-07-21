@@ -62,7 +62,8 @@ class WishlistItemOut(BaseModel):
 class GiftCard(BaseModel):
     id: int
     title: str
-    price: float | None
+    price: float | None          # основная (старая) цена
+    discount_percent: int        # 0 -> скидки нет
     currency: str
     image_url: str | None
     product_url: str

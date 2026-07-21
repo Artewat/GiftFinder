@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./AuthContext";
 import ProtectedRoute from "./ProtectedRoute";
+import ThemeToggle from "./components/ThemeToggle";
 import HomePage from "./pages/HomePage";
 import SearchPage from "./pages/SearchPage";
 import LoginPage from "./LoginPage";
@@ -13,6 +14,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
+        <ThemeToggle />
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />

@@ -241,6 +241,7 @@ def _card(p: Product, reason: Optional[str]) -> dict:
         "id": p.id,
         "title": p.title,
         "price": float(p.price) if p.price is not None else None,
+        "discount_percent": p.discount_percent or 0,
         "currency": p.currency,
         "image_url": p.image_url,
         "product_url": p.product_url,

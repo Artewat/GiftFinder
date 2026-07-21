@@ -20,17 +20,17 @@ export default function WishlistPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F5F3FA]">
+    <div className="min-h-screen bg-[#F5F3FA] dark:bg-slate-900">
       <NavBar active="wishlist" />
       <div className="mx-auto max-w-5xl px-4 py-10">
-        <h1 className="mb-6 text-2xl font-bold text-violet-950">Избранное</h1>
+        <h1 className="mb-6 text-2xl font-bold text-violet-950 dark:text-slate-100">Избранное</h1>
 
-        {items === null && <p className="text-slate-500">Загрузка…</p>}
+        {items === null && <p className="text-slate-500 dark:text-slate-400">Загрузка…</p>}
 
         {items !== null && items.length === 0 && (
-          <div className="text-slate-500">
+          <div className="text-slate-500 dark:text-slate-400">
             <p>Здесь пока пусто.</p>
-            <Link to="/search" className="text-violet-700 hover:underline">Перейти к поиску</Link>
+            <Link to="/search" className="text-violet-700 dark:text-violet-300 hover:underline">Перейти к поиску</Link>
           </div>
         )}
 
@@ -38,8 +38,8 @@ export default function WishlistPage() {
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {items.map((item) => (
               <article key={item.id}
-                className={`flex flex-col overflow-hidden rounded-2xl border bg-white shadow-sm ${item.available ? "border-violet-100" : "border-slate-200 opacity-75"}`}>
-                <div className="relative aspect-[4/3] bg-violet-50">
+                className={`flex flex-col overflow-hidden rounded-2xl border bg-white dark:bg-slate-800 shadow-sm ${item.available ? "border-violet-100 dark:border-slate-700" : "border-slate-200 dark:border-slate-700 opacity-75"}`}>
+                <div className="relative aspect-[4/3] bg-violet-50 dark:bg-slate-800">
                   {item.image_url ? (
                     <img src={item.image_url} alt={item.title} className="h-full w-full object-cover" />
                   ) : (
@@ -54,22 +54,22 @@ export default function WishlistPage() {
                   )}
                 </div>
                 <div className="flex flex-1 flex-col gap-3 p-4">
-                  <h3 className="text-base font-semibold leading-snug text-violet-950">{item.title}</h3>
+                  <h3 className="text-base font-semibold leading-snug text-violet-950 dark:text-slate-100">{item.title}</h3>
                   <div className="mt-auto flex items-center justify-between gap-3 pt-2">
-                    <span className="text-lg font-bold text-violet-700">{formatPrice(item.price, item.currency)}</span>
+                    <span className="text-lg font-bold text-violet-700 dark:text-violet-300">{formatPrice(item.price, item.currency)}</span>
                     {item.available ? (
                       <a href={item.product_url} target="_blank" rel="noopener noreferrer"
                         className="inline-flex items-center rounded-full bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-700">
                         Купить
                       </a>
                     ) : (
-                      <span className="inline-flex cursor-not-allowed items-center rounded-full bg-slate-200 px-4 py-2 text-sm font-medium text-slate-400">
+                      <span className="inline-flex cursor-not-allowed items-center rounded-full bg-slate-200 dark:bg-slate-700 px-4 py-2 text-sm font-medium text-slate-400 dark:text-slate-500">
                         Купить
                       </span>
                     )}
                   </div>
                   <button onClick={() => remove(item.id)}
-                    className="text-sm text-slate-400 hover:text-rose-600">
+                    className="text-sm text-slate-400 dark:text-slate-500 hover:text-rose-600 dark:hover:text-rose-400">
                     Удалить из избранного
                   </button>
                 </div>

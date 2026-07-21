@@ -85,20 +85,20 @@ export default function SearchPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F5F3FA] text-violet-950">
+    <div className="min-h-screen bg-[#F5F3FA] dark:bg-slate-900 text-violet-950 dark:text-slate-100">
       {/* Навигация */}
       <NavBar active="search" />
 
-      <div className="mx-auto max-w-5xl px-4 py-10 sm:py-14">
+      <div className="mx-auto max-w-6xl px-4 py-10 sm:py-14">
         {/* Шапка + поиск */}
         <header className="mx-auto max-w-2xl text-center">
-          <p className="mb-2 text-sm font-medium uppercase tracking-widest text-violet-500">
+          <p className="mb-2 text-sm font-medium uppercase tracking-widest text-violet-500 dark:text-violet-300">
             Умный подбор подарков
           </p>
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
             Опишите, кому и по какому поводу
           </h1>
-          <p className="mt-3 text-slate-600">
+          <p className="mt-3 text-slate-600 dark:text-slate-300">
             Подберём идеи под получателя, повод и бюджет — и покажем, где купить.
           </p>
 
@@ -109,7 +109,7 @@ export default function SearchPage() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Например: подарок маме на юбилей до 5000 ₽"
-                className="w-full rounded-full border border-violet-200 bg-white px-5 py-3.5 text-base shadow-sm outline-none placeholder:text-slate-400 focus:border-violet-400 focus:ring-2 focus:ring-violet-200"
+                className="w-full rounded-full border border-violet-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-5 py-3.5 text-base shadow-sm outline-none placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-violet-400 focus:ring-2 focus:ring-violet-200"
               />
               <button
                 type="submit"
@@ -122,15 +122,15 @@ export default function SearchPage() {
           </form>
 
           {usage && usage.tier === "free" && (
-            <p className="mt-3 text-center text-sm text-slate-500">
+            <p className="mt-3 text-center text-sm text-slate-500 dark:text-slate-400">
               Осталось поисков сегодня: {usage.remaining} из {usage.limit}
             </p>
           )}
 
           {limitReached && (
-            <div className="mx-auto mt-6 max-w-md rounded-2xl border border-amber-200 bg-amber-50 p-5 text-center">
-              <p className="font-medium text-amber-800">Дневной лимит поисков исчерпан</p>
-              <p className="mt-1 text-sm text-amber-700">
+            <div className="mx-auto mt-6 max-w-md rounded-2xl border border-amber-200 bg-amber-50 dark:bg-amber-950/30 p-5 text-center">
+              <p className="font-medium text-amber-800 dark:text-amber-200">Дневной лимит поисков исчерпан</p>
+              <p className="mt-1 text-sm text-amber-700 dark:text-amber-300">
                 Оформите premium для безлимитного поиска.
               </p>
               <Link
@@ -151,7 +151,7 @@ export default function SearchPage() {
                     setQuery(ex);
                     run(ex);
                   }}
-                  className="rounded-full border border-violet-200 bg-white px-4 py-1.5 text-sm text-violet-700 transition-colors hover:border-violet-300 hover:bg-violet-50"
+                  className="rounded-full border border-violet-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-1.5 text-sm text-violet-700 dark:text-violet-300 transition-colors hover:border-violet-300 dark:hover:border-slate-600 hover:bg-violet-50 dark:hover:bg-slate-800"
                 >
                   {ex}
                 </button>
@@ -165,11 +165,11 @@ export default function SearchPage() {
           {status === "loading" && <SkeletonGrid />}
 
           {status === "error" && (
-            <div className="mx-auto max-w-md rounded-2xl border border-rose-200 bg-rose-50 p-6 text-center">
-              <p className="font-medium text-rose-700">
+            <div className="mx-auto max-w-md rounded-2xl border border-rose-200 bg-rose-50 dark:bg-rose-950/30 p-6 text-center">
+              <p className="font-medium text-rose-700 dark:text-rose-300">
                 Не удалось выполнить поиск
               </p>
-              <p className="mt-1 text-sm text-rose-600">
+              <p className="mt-1 text-sm text-rose-600 dark:text-rose-400">
                 Проверьте, что сервер запущен, и попробуйте ещё раз.
               </p>
               <button
@@ -182,8 +182,8 @@ export default function SearchPage() {
           )}
 
           {status === "done" && results.length === 0 && (
-            <div className="mx-auto max-w-md text-center text-slate-500">
-              <p className="text-lg font-medium text-violet-950">
+            <div className="mx-auto max-w-md text-center text-slate-500 dark:text-slate-400">
+              <p className="text-lg font-medium text-violet-950 dark:text-slate-100">
                 Ничего не подобралось
               </p>
               <p className="mt-1 text-sm">
@@ -195,10 +195,10 @@ export default function SearchPage() {
 
           {status === "done" && results.length > 0 && (
             <>
-              <p className="mb-5 text-sm text-slate-500">
+              <p className="mb-5 text-sm text-slate-500 dark:text-slate-400">
                 Идеи по запросу «{lastQuery}»
               </p>
-              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                 {results.map((card) => (
                   <GiftCard
                     key={card.id}
@@ -218,17 +218,17 @@ export default function SearchPage() {
 
 function SkeletonGrid() {
   return (
-    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
       {Array.from({ length: 6 }).map((_, i) => (
         <div
           key={i}
-          className="overflow-hidden rounded-2xl border border-violet-100 bg-white"
+          className="overflow-hidden rounded-2xl border border-violet-100 dark:border-slate-700 bg-white dark:bg-slate-800"
         >
-          <div className="aspect-[4/3] animate-pulse bg-violet-100 motion-reduce:animate-none" />
+          <div className="aspect-[4/3] animate-pulse bg-violet-100 dark:bg-slate-700 motion-reduce:animate-none" />
           <div className="space-y-3 p-4">
-            <div className="h-4 w-3/4 animate-pulse rounded bg-violet-100 motion-reduce:animate-none" />
-            <div className="h-3 w-full animate-pulse rounded bg-violet-50 motion-reduce:animate-none" />
-            <div className="h-3 w-2/3 animate-pulse rounded bg-violet-50 motion-reduce:animate-none" />
+            <div className="h-4 w-3/4 animate-pulse rounded bg-violet-100 dark:bg-slate-700 motion-reduce:animate-none" />
+            <div className="h-3 w-full animate-pulse rounded bg-violet-50 dark:bg-slate-800 motion-reduce:animate-none" />
+            <div className="h-3 w-2/3 animate-pulse rounded bg-violet-50 dark:bg-slate-800 motion-reduce:animate-none" />
           </div>
         </div>
       ))}

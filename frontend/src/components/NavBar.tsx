@@ -15,7 +15,7 @@ function TierBadge({ tier }: { tier: string }) {
   return (
     <span
       className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-        premium ? "bg-violet-600 text-white" : "bg-violet-100 text-violet-700"
+        premium ? "bg-violet-600 text-white" : "bg-violet-100 dark:bg-slate-700 text-violet-700 dark:text-violet-300"
       }`}
     >
       {premium ? "Premium" : "Free"}
@@ -40,11 +40,11 @@ export default function NavBar({ active }: { active?: Active }) {
   const links = LINKS.filter((l) => l.key !== active);
 
   return (
-    <nav className="sticky top-0 z-30 border-b border-violet-100 bg-white/80 backdrop-blur">
+    <nav className="sticky top-0 z-30 border-b border-violet-100 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 backdrop-blur">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
         <Link
           to="/"
-          className="flex items-center gap-2 font-semibold text-violet-700 transition-colors hover:text-violet-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600"
+          className="flex items-center gap-2 font-semibold text-violet-700 dark:text-violet-300 transition-colors hover:text-violet-900 dark:hover:text-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600"
         >
           <span className="text-xl">🎁</span>
           <span>GiftFinder</span>
@@ -55,21 +55,21 @@ export default function NavBar({ active }: { active?: Active }) {
           {user ? (
             <>
               <TierBadge tier={user.tier} />
-              <span className="hidden text-sm text-slate-500 lg:inline">
+              <span className="hidden text-sm text-slate-500 dark:text-slate-400 lg:inline">
                 {user.email}
               </span>
               {links.map((l) => (
                 <Link
                   key={l.key}
                   to={l.to}
-                  className="rounded-full px-3.5 py-1.5 text-sm font-medium text-violet-700 transition-colors hover:bg-violet-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600"
+                  className="rounded-full px-3.5 py-1.5 text-sm font-medium text-violet-700 dark:text-violet-300 transition-colors hover:bg-violet-100 dark:hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600"
                 >
                   {l.label}
                 </Link>
               ))}
               <button
                 onClick={handleLogout}
-                className="rounded-full px-3 py-1.5 text-sm font-medium text-slate-500 transition-colors hover:bg-violet-100 hover:text-violet-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600"
+                className="rounded-full px-3 py-1.5 text-sm font-medium text-slate-500 dark:text-slate-400 transition-colors hover:bg-violet-100 dark:hover:bg-slate-700 hover:text-violet-700 dark:hover:text-violet-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600"
               >
                 Выйти
               </button>
@@ -78,7 +78,7 @@ export default function NavBar({ active }: { active?: Active }) {
             <>
               <Link
                 to="/login"
-                className="rounded-full px-4 py-1.5 text-sm font-medium text-violet-700 transition-colors hover:bg-violet-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600"
+                className="rounded-full px-4 py-1.5 text-sm font-medium text-violet-700 dark:text-violet-300 transition-colors hover:bg-violet-100 dark:hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600"
               >
                 Войти
               </Link>
@@ -99,7 +99,7 @@ export default function NavBar({ active }: { active?: Active }) {
           aria-label={open ? "Закрыть меню" : "Открыть меню"}
           aria-expanded={open}
           aria-controls="mobile-menu"
-          className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-violet-700 transition-colors hover:bg-violet-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600 sm:hidden"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-violet-700 dark:text-violet-300 transition-colors hover:bg-violet-100 dark:hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600 sm:hidden"
         >
           <svg
             width="22"
@@ -131,13 +131,13 @@ export default function NavBar({ active }: { active?: Active }) {
       {open && (
         <div
           id="mobile-menu"
-          className="border-t border-violet-100 bg-white px-4 py-3 sm:hidden"
+          className="border-t border-violet-100 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-3 sm:hidden"
         >
           {user ? (
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-2 px-1 pb-2">
                 <TierBadge tier={user.tier} />
-                <span className="truncate text-sm text-slate-500">
+                <span className="truncate text-sm text-slate-500 dark:text-slate-400">
                   {user.email}
                 </span>
               </div>
@@ -146,14 +146,14 @@ export default function NavBar({ active }: { active?: Active }) {
                   key={l.key}
                   to={l.to}
                   onClick={() => setOpen(false)}
-                  className="rounded-lg px-3 py-2.5 text-sm font-medium text-violet-700 transition-colors hover:bg-violet-100"
+                  className="rounded-lg px-3 py-2.5 text-sm font-medium text-violet-700 dark:text-violet-300 transition-colors hover:bg-violet-100 dark:hover:bg-slate-700"
                 >
                   {l.label}
                 </Link>
               ))}
               <button
                 onClick={handleLogout}
-                className="rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-500 transition-colors hover:bg-violet-100 hover:text-violet-700"
+                className="rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-500 dark:text-slate-400 transition-colors hover:bg-violet-100 dark:hover:bg-slate-700 hover:text-violet-700 dark:hover:text-violet-300"
               >
                 Выйти
               </button>
@@ -163,7 +163,7 @@ export default function NavBar({ active }: { active?: Active }) {
               <Link
                 to="/login"
                 onClick={() => setOpen(false)}
-                className="rounded-lg px-3 py-2.5 text-sm font-medium text-violet-700 transition-colors hover:bg-violet-100"
+                className="rounded-lg px-3 py-2.5 text-sm font-medium text-violet-700 dark:text-violet-300 transition-colors hover:bg-violet-100 dark:hover:bg-slate-700"
               >
                 Войти
               </Link>
